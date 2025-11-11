@@ -1,15 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const authController = require('../controllers/authController');
-const checkLoginAuth = require('../middleware/check-login-auth');
+const authRoutes = require('./auth.routes.js');
+const userRoutes = require('./user.routes');
+// const stadiumRoutes = require('./stadium.routes');
+// const cartRoutes = require('./cart.routes');
 
-router.post('/signup', authController.signup);
-router.post('/signin', authController.signin);
-
-// Protected route example
-router.get('/me', checkLoginAuth, (req, res) => {
-    res.json({ message: 'This will be a protected route' });
-});
+router.use('/auth', authRoutes);
+router.use('/users', userRoutes);
+// router.use('/stadiums', stadiumRoutes);
+// router.use('/cart', cartRoutes);
 
 module.exports = router;
