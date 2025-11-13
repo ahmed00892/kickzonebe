@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const v1Router = require('../routes/routes');
 
 const app = express();
 
@@ -21,6 +22,7 @@ mongoose
   });
 
 app.use(express.json());
+app.use('/api/v1', v1Router);
 
 app.use((req, res) => {
   res.status(404).json({ message: "wrong routing", data: null });
