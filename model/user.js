@@ -1,51 +1,43 @@
 const mongoose = require("mongoose");
 
-// ✅ تعريف الـ Schema
 const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
-      required: [true, "First name is required"],
       trim: true,
     },
     lastName: {
       type: String,
-      required: [true, "Last name is required"],
       trim: true,
     },
     email: {
       type: String,
-      required: [true, "Email is required"],
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
-      minlength: [6, "Password must be at least 6 characters"],
-      select: false, // ❗ يمنع إظهار الباسورد عند جلب المستخدم
+      select: false,
+    },
+    birthday: {
+      type: Date,
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
       default: "user",
     },
     favouritePosition: {
       type: String,
-      enum: ["Goalkeeper", "Defender", "Midfielder", "Forward"],
       default: null,
     },
     preferredFoot: {
       type: String,
-      enum: ["Left", "Right", "Both"],
       default: null,
     },
     matchesPlayed: {
       type: Number,
       default: 0,
-      min: [0, "Matches played cannot be negative"],
     },
     profilePicture: {
       type: String,
@@ -61,7 +53,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ✅ منع ظهور بعض الحقول الحساسة في JSON
 userSchema.set("toJSON", {
   transform: function (doc, ret) {
     delete ret.password;
