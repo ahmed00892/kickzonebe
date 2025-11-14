@@ -1,6 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
+
 const cors = require("cors");
+
+const v1Router = require('../routes/routes');
+
 const app = express();
 const StadiumRoutes = require("../routes/stadium");
 require("dotenv").config();
@@ -21,7 +25,12 @@ mongoose
   });
 app.use(cors());
 app.use(express.json());
+
 app.use("/stadiums", StadiumRoutes);
+
+app.use('/api/v1', v1Router);
+
+
 app.use((req, res) => {
   res.status(404).json({ message: "wrong routing", data: null });
 });
