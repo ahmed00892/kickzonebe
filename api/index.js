@@ -4,46 +4,65 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 const v1Router = require("../routes/routes");
-const StadiumRoutes = require("../routes/stadium.routes");
+// const StadiumRoutes = require("../routes/stadium.routes"); 
 
 dotenv.config();
 
-// Allow up to 10mb (or 50mb) for uploading images as base64
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
+// 1. INITIALIZE APP
+const app = express();
 
 const PORT = process.env.PORT || 7000;
 const DB_URL = process.env.DB_URL || process.env.DB_url;
 
-// Connect to MongoDB
+// 2. CORS CONFIGURATION
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "https://kickzone-taupe.vercel.app",
+  "https://kickzone-frontend.vercel.app"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true 
+}));
+
+// 3. BODY PARSER WITH 10MB LIMIT
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+// 4. DATABASE CONNECTION
+if (!DB_URL) {
+  console.error("CRITICAL ERROR: No DB_URL found in environment variables.");
+}
+
 mongoose
-  .connect(DB_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log(" Connected to MongoDB"))
+  .connect(DB_URL)
+  .then(() => console.log("Connected to MongoDB"))
   .catch((error) =>
-    console.error(" Database connection error:", error.message)
+    console.error("Database connection error:", error.message)
   );
 
-app.use(express.json());
-const allowedOrigins = [
-  "http://localhost:3000", // Allow local development
-  "http://localhost:5173", // Allow Vite local development
-  "https://kickzone-taupe.vercel.app", // Allow production frontend
-];
-app.use(cors({
-  origin: '*', // Allow ANYONE to connect (for testing only)
-  credentials: true
-}));
-// Router
+// 5. ROUTES
+app.get("/", (req, res) => {
+  res.send("Kickzone API is running!");
+});
+
 app.use("/api/v1", v1Router);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found", data: null });
 });
 
-// Start server
+// 6. START SERVER
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
