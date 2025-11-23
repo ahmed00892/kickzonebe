@@ -27,7 +27,7 @@ app.use(express.json());
 const allowedOrigins = [
   "http://localhost:3000", // Allow local development
   "http://localhost:5173", // Allow Vite local development
-  "https://kickzone-taupe.vercel.app/", // Allow production frontend
+  "https://kickzone-taupe.vercel.app", // Allow production frontend
 ];
 app.use(
   cors({
