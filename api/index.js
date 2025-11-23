@@ -1,16 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const v1Router = require("../routes/routes"); 
+const v1Router = require("../routes/routes");
 const cors = require("cors");
 const app = express();
 
 dotenv.config();
 
-
 const PORT = process.env.PORT || 7000;
-const DB_URL = process.env.DB_URL || process.env.DB_url; 
-
+const DB_URL = process.env.DB_URL || process.env.DB_url;
 
 mongoose
   .connect(DB_URL, {
@@ -18,14 +16,33 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => console.log(" Connected to MongoDB"))
-  .catch((error) => console.error(" Database connection error:", error.message));
-
+  .catch((error) =>
+    console.error(" Database connection error:", error.message)
+  );
 
 app.use(express.json());
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:3000", // Allow local development
+  "http://localhost:5173", // Allow Vite local development
+  "https://kickzone-taupe.vercel.app/", // Allow production frontend
+];
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        var msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true, // Allow cookies/headers if needed
+  })
+);
 
 app.use("/api/v1", v1Router);
-
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found", data: null });
