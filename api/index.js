@@ -8,7 +8,10 @@ const StadiumRoutes = require("../routes/stadium.routes");
 
 dotenv.config();
 
-const app = express();
+// Allow up to 10mb (or 50mb) for uploading images as base64
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
 const PORT = process.env.PORT || 7000;
 const DB_URL = process.env.DB_URL || process.env.DB_url;
 
