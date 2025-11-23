@@ -18,18 +18,35 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((error) => console.error("Database connection error:", error.message));
+  .then(() => console.log(" Connected to MongoDB"))
+  .catch((error) =>
+    console.error(" Database connection error:", error.message)
+  );
 
-// Middleware
-app.use(cors());
 app.use(express.json());
+const allowedOrigins = [
+  "http://localhost:3000", // Allow local development
+  "http://localhost:5173", // Allow Vite local development
+  "https://kickzone-taupe.vercel.app/", // Allow production frontend
+];
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        var msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true, // Allow cookies/headers if needed
+  })
+);
 
-// Routes
-app.use("/stadiums", StadiumRoutes); // Haneen's route
-app.use("/api/v1", v1Router); // master route
+app.use("/api/v1", v1Router);
 
-// 404 handler
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found", data: null });
 });
