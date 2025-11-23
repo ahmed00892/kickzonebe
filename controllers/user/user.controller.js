@@ -3,7 +3,7 @@ const updateMe = require("./updateme");
 const getAllUsers = require("./getall");
 const getOneUser = require("./getone");
 const deleteUser = require("./delete");
-
+const getMe = require("./getme");
 // Export them all in one object
 module.exports = {
   updateUser,
@@ -11,4 +11,5 @@ module.exports = {
   getAllUsers,
   getOneUser,
   deleteUser,
+  getMe,
 };

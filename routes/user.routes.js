@@ -33,7 +33,13 @@ router.patch(
   checkRoleAuth(['admin', 'user']),
   userController.updateMe
 );
-
+// Get logged-in user's profile
+router.get(
+  '/me',
+  checkLoginAuth,
+  checkRoleAuth(['admin', 'user']),
+  userController.getMe
+);
 // Admin or User can get a user profile by ID
 router.get(
   '/:id',
