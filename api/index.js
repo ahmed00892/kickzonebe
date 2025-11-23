@@ -1,15 +1,18 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-const v1Router = require("../routes/routes");
 const cors = require("cors");
-const app = express();
+const dotenv = require("dotenv");
+
+const v1Router = require("../routes/routes");
+const StadiumRoutes = require("../routes/stadium.routes");
 
 dotenv.config();
 
+const app = express();
 const PORT = process.env.PORT || 7000;
 const DB_URL = process.env.DB_URL || process.env.DB_url;
 
+// Connect to MongoDB
 mongoose
   .connect(DB_URL, {
     useNewUrlParser: true,
@@ -48,8 +51,9 @@ app.use((req, res) => {
   res.status(404).json({ message: "Route not found", data: null });
 });
 
+// Start server
 app.listen(PORT, () => {
-  console.log(` Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
 
 module.exports = app;
